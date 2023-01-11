@@ -1,10 +1,10 @@
 package com.vivek.mvvmkotlindaggercoroutines
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -17,7 +17,7 @@ import com.vivek.mvvmkotlindaggercoroutines.di.module.ActivityModule
 import com.vivek.mvvmkotlindaggercoroutines.ui.adapter.TopHeadlineAdapter
 import com.vivek.mvvmkotlindaggercoroutines.ui.viewmodels.TopHeadlineViewModel
 import com.vivek.mvvmkotlindaggercoroutines.utils.Status
-import kotlinx.coroutines.flow.collect
+import com.vivek.mvvmkotlindaggercoroutines.utils.Utility
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,39 +36,41 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        Utility.makeFullScreen(this)
+        supportActionBar?.hide()
         setupUI()
         setupObserver()
 
     }
 
     private fun setupObserver() {
-lifecycleScope.launch {
+        lifecycleScope.launch {
 
-    repeatOnLifecycle(Lifecycle.State.STARTED){
-        topHeadlineViewModel.articleList.collect{
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                topHeadlineViewModel.articleList.collect {
 
-            when (it.status){
+                    when (it.status) {
 
-                Status.SUCCESS -> {
-                    binding.progressBar.visibility = View.GONE
-                    it.data?.let { articleList -> renderList(articleList) }
-                    binding.recyclerView.visibility = View.VISIBLE
-                }
-                Status.LOADING -> {
-                    binding.progressBar.visibility = View.VISIBLE
-                    binding.recyclerView.visibility = View.GONE
-                }
+                        Status.SUCCESS -> {
+                            binding.progressBar.visibility = View.GONE
+                            it.data?.let { articleList -> renderList(articleList) }
+                            binding.recyclerView.visibility = View.VISIBLE
+                        }
+                        Status.LOADING -> {
+                            binding.progressBar.visibility = View.VISIBLE
+                            binding.recyclerView.visibility = View.GONE
+                        }
 
-                Status.ERROR -> {
-                    //Handle Error
-                    binding.progressBar.visibility = View.GONE
-                    Toast.makeText(this@MainActivity, it.message, Toast.LENGTH_LONG)
-                        .show()
+                        Status.ERROR -> {
+                            //Handle Error
+                            binding.progressBar.visibility = View.GONE
+                            Toast.makeText(this@MainActivity, it.message, Toast.LENGTH_LONG)
+                                .show()
+                        }
+                    }
                 }
             }
         }
-    }
-}
 
     }
 
