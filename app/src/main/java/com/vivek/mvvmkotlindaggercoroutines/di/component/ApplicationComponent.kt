@@ -20,6 +20,8 @@ interface ApplicationComponent {
 
     fun getNetworkService() : NetworkService
 
+//    Adding a simultanous
+
     fun getTopHeadlineRepository(): TopHeadlineRepository
 
 }

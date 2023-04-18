@@ -14,6 +14,7 @@ class App : Application() {
     }
 
     private fun injectDependencies() {
+
         applicationComponent = DaggerApplicationComponent
             .builder()
             .applicationModule(ApplicationModule(this))
